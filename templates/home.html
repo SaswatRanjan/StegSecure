@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>StegSecure — Hide Your Secrets in Plain Sight</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='indexstyles.css') }}" />
+  <link rel="icon" type="image/png"
+      href="{{ url_for('static', filename='res/secure.png') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container navbar">
+      <a class="brand" href="#" aria-label="StegSecure Home" onclick="window.location.href='{{ url_for('home') }}';">
+        <span class="logo" aria-hidden="true">
+          <img src= "{{ url_for('static', filename='res/icon.png') }}" width="32" height="32">
+        </span>
+        <span class="brand-name">StegSecure</span>
+      </a>
+
+      <nav aria-label="Main navigation">
+  <div class="nav-links">
+    <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+    <a class="nav-link" href="{{ url_for('tool') }}">Tool</a>
+    <a class="nav-link" href="{{ url_for('about') }}">About</a>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <h1 class="headline">Hide Your Secrets in Plain Sight</h1>
+          <p class="subtext">
+            StegSecure is a advanced, web-based unified cryptography + steganography tool that allows you to embed secret messages within multiple media formats,
+            ensuring your private communications remain confidential.
+          </p>
+          <div class="cta">
+            <button class="btn btn-primary" type="button" onclick="window.location.href='{{ url_for('tool') }}';">Start Using Tool
+              <img src= "{{ url_for('static', filename='res/next.png') }}" height="18" width="18"></button>
+            <button class="btn btn-ghost" type="button" onclick="window.location.href='{{ url_for('about') }}';">Learn More</button>
+          </div>
+        </div>
+
+        <div class="hero-media">
+          <div class="image-wrap">
+            <img
+              class="hero-img"
+              src= "{{ url_for('static', filename='res/Rambagh Palace.png') }}"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="how">
+      <div class="container">
+        <h2 class="how-title">How It Works</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="card-icon">
+              <span class="icon-circle" aria-hidden="true">
+                <img src= "{{ url_for('static', filename='res/encode.png') }}" width="32" height="32">
+              </span>
+            </div>
+            <h3 class="card-title">Encode</h3>
+            <p class="card-text">
+              Upload your cover media, type your secret message, and StegSecure will generate a new stego file with your
+              message hidden inside.
+            </p>
+          </article>
+
+          <article class="card">
+            <div class="card-icon">
+              <span class="icon-circle" aria-hidden="true">
+                <img src= "{{ url_for('static', filename='res/decode.png') }}" width="32" height="32">
+              </span>
+            </div>
+            <h3 class="card-title">Decode</h3>
+            <p class="card-text">
+              Have a stego image? Upload it to StegSecure to extract the hidden message securely and instantly.
+            </p>
+          </article>
+
+          <article class="card">
+            <div class="card-icon">
+              <span class="icon-circle" aria-hidden="true">
+                <img src= "{{ url_for('static', filename='res/secure.png') }}" width="32" height="32">
+              </span>
+            </div>
+            <h3 class="card-title">Secure</h3>
+            <p class="card-text">
+              Built with privacy-first architecture for secure encryption and hidden data protection
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>© 2025 StegSecure. All rights reserved.</div>
+      <div>Secure • Hidden • Intelligent Communication</div>
+    </div>
+  </footer>
+</body>
+</html>

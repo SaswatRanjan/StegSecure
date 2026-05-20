@@ -1,0 +1,928 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>StegSecure — Hide Your Secrets in Plain Sight</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='toolstyles.css') }}" />
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='res/secure.png') }}" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container navbar">
+        <a class="brand" href="#" aria-label="StegSecure Home" onclick="window.location.href='{{ url_for('home') }}';">
+          <span class="logo" aria-hidden="true">
+            <img src="{{ url_for('static', filename='res/icon.png') }}" width="32" height="32" />
+          </span>
+          <span class="brand-name">StegSecure</span>
+        </a>
+
+        <nav aria-label="Main navigation">
+          <div class="nav-links">
+            <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+            <a class="nav-link" href="{{ url_for('tool') }}">Tool</a>
+            <a class="nav-link" href="{{ url_for('about') }}">About</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <h1 class="headline">Cryptography Enhanced Steganography Tool</h1>
+            <p class="subtext">Choose whether to hide a message (Encode) or reveal one (Decode)</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ENCODE and DECODE Navigator -->
+      <section class="tool-section">
+        <div class="mode-toggle">
+          <input type="radio" id="encode" name="mode" checked />
+          <label for="encode">
+            <img src="{{ url_for('static', filename='res/lock.png') }}" width="16" height="16" alt="" />
+            Encode
+          </label>
+
+          <input type="radio" id="decode" name="mode" />
+          <label for="decode">
+            <img src="{{ url_for('static', filename='res/unlock.png') }}" width="16" height="16" alt="" />
+            Decode
+          </label>
+        </div>
+        
+        
+        
+        <!-- cover selector -->
+        <p class="cover-title">--Select the Cover Type--</p>
+        <div class="cover-selector">
+          <button class="cover-btn active" data-type="image">📸 Image</button>
+          <button class="cover-btn" data-type="audio">🎵 Audio</button>
+          <button class="cover-btn" data-type="video">🎥 Video</button>
+        </div>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <!-- ENCODE Workspaces -->
+        <!-- ENCODE Images -->
+        <form id="encode-image" class="workspace active" enctype="multipart/form-data">
+          <label for="encode-file" class="upload-label">Upload Cover Image:</label>
+          <div class="upload-area" id="encode-drop-area">
+            <div class="upload-content">
+              <img src="{{ url_for('static', filename='res/upload.png') }}" for="upload-area" class="upload-image" />
+              <p><span class="browse">Click to Upload</span> or Drag & drop your Cover file here.</p>
+              <p for="upload-area" class="plite">PNG, BMP, etc.</p>
+            </div>
+            <input type="file" id="encode-file" name="image" accept="image/png,image/bmp" hidden />
+            <img
+              id="encode-preview"
+              class="preview-img"
+              alt=""
+              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
+          </div>
+          <label for="mb" class="message-label">Message:</label>
+          <textarea
+            id="mb"
+            class="message-box"
+            name="message"
+            placeholder="Type or paste your secret message here..."></textarea>
+          <div class="password-group">
+            <label for="encodePassword">Encryption Password:</label>
+
+            <div class="password-wrapper">
+              <input type="password" id="encodePassword" name="password" placeholder="Enter secret key" required />
+              <span class="toggle-password" onclick="togglePassword('encodePassword', this)"> 👁 </span>
+            </div>
+
+            <small class="password-note"> *Use the same password for encoding and decoding </small>
+          </div>
+          <p id="encodeResult"></p>
+          <button class="action-btn" type="submit">Generate Stego Image</button>
+          </form>
+          
+        
+        
+        
+        
+        
+        
+        <!-- ENCODE Audio -->
+        <form id="encode-audio" class="workspace" enctype="multipart/form-data">
+          <label for="encode-audio-file" class="upload-label">Upload Cover Audio:</label>
+          <div class="upload-area" id="encode-audio-drop-area">
+            <div class="upload-content">
+              <img src="{{ url_for('static', filename='res/upload.png') }}" for="upload-area" class="upload-image" />
+              <p><span class="browse">Click to Upload</span> or Drag & drop your audio file here.</p>
+              <p for="upload-area" class="plite">WAV, FLAC, etc.</p>
+            </div>
+
+            <input type="file" id="encode-audio-file" name="image" accept=".wav,.flac" hidden />
+
+            <audio id="encode-audio-preview" class="preview-audio" controls style="display:none;"></audio>
+          </div>
+
+          <label class="message-label">Message:</label>
+          <textarea
+            class="message-box"
+            name="message"
+            placeholder="Type or paste your secret message here..."></textarea>
+
+          <div class="password-group">
+            <label for="encodeAudioPassword">Encryption Password:</label>
+
+            <div class="password-wrapper">
+              <input type="password" id="encodeAudioPassword" name="password" placeholder="Enter secret key" required />
+              <span class="toggle-password" onclick="togglePassword('encodeAudioPassword', this)"> 👁 </span>
+            </div>
+
+            <small class="password-note">
+              *Use the same password for encoding and decoding
+            </small>
+          </div>
+
+          <p id="encodeAudioResult"></p>
+
+          <button class="action-btn" type="submit">Generate Stego Audio</button>
+          </form>
+          
+        
+        
+        
+        
+        
+        <!-- ENCODE Video -->
+        <form id="encode-video" class="workspace" enctype="multipart/form-data">
+          <label for="encode-video-file" class="upload-label">Upload Cover Video:</label>
+          <div class="upload-area" id="encode-video-drop-area">
+            <div class="upload-content">
+              <img src="{{ url_for('static', filename='res/upload.png') }}" for="upload-area" class="upload-image" />
+              <p><span class="browse">Click to Upload</span> or Drag & drop your video file here.</p>
+              <p for="upload-area" class="plite">MP4, AVI, MKV, etc.</p>
+            </div>
+
+            <input type="file" id="encode-video-file" name="image" accept=".mp4,.avi,.mkv" hidden />
+
+            <video id="encode-video-preview" class="preview-video" controls style="display:none;"></video>
+          </div>
+
+          <label class="message-label">Message:</label>
+          <textarea
+            class="message-box"
+            name="message"
+            placeholder="Type or paste your secret message here..."></textarea>
+
+          <div class="password-group">
+            <label for="encodeVideoPassword">Encryption Password:</label>
+
+            <div class="password-wrapper">
+              <input type="password" id="encodeVideoPassword" name="password" placeholder="Enter secret key" required />
+              <span class="toggle-password" onclick="togglePassword('encodeVideoPassword', this)"> 👁 </span>
+            </div>
+
+            <small class="password-note">
+              *Use the same password for encoding and decoding
+            </small>
+          </div>
+
+          <p id="encodeVideoResult"></p>
+
+          <button class="action-btn" type="submit">Generate Stego Video</button>
+          </form>
+        
+        
+        
+        
+        
+        
+        
+        
+        <!-- DECODE Workspace -->
+        <!-- DECODE Image -->
+        <form id="decode-image" class="workspace" enctype="multipart/form-data">
+          <label for="decode-file" class="upload-label">Upload Stego Image:</label>
+          <div class="upload-area" id="decode-drop-area">
+            <div class="upload-content">
+              <img src="{{ url_for('static', filename='res/upload.png') }}" for="upload-area" class="upload-image" />
+              <p><span class="browse">Click to Upload</span> or Drag & drop your Stego image here.</p>
+              <p for="upload-area" class="plite">PNG, BMP, etc.</p>
+            </div>
+            <input type="file" id="decode-file" name="image" accept="image/png,image/bmp" hidden />
+            <img
+              id="decode-preview"
+              class="preview-img"
+              alt=""
+              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
+          </div>
+          <div class="password-group">
+            <label for="decodePassword">Decryption Password:</label>
+
+            <div class="password-wrapper">
+              <input type="password" id="decodePassword" name="password" placeholder="Enter secret key" required />
+              <span class="toggle-password" onclick="togglePassword('decodePassword', this)"> 👁 </span>
+            </div>
+          </div>
+
+          <p id="decodeResult"></p>
+
+          <button class="action-btn2" type="submit">Decode Secret Message</button>
+        </form>
+        <!-- DECODE Audio -->
+        <form id="decode-audio" class="workspace" enctype="multipart/form-data">
+          <label for="decode-audio-file" class="upload-label">Upload Stego Audio:</label>
+          <div class="upload-area" id="decode-audio-drop-area">
+            <div class="upload-content">
+              <img src="{{ url_for('static', filename='res/upload.png') }}" class="upload-image" />
+              <p><span class="browse">Click to Upload</span> or Drag & drop your Stego audio here.</p>
+              <p class="plite">WAV, FLAC, etc.</p>
+            </div>
+
+            <input type="file" id="decode-audio-file" name="image" accept=".wav,.flac" hidden />
+
+            <audio id="decode-audio-preview" class="preview-audio" controls style="display:none;"></audio>
+          </div>
+
+          <div class="password-group">
+            <label for="decodeAudioPassword">Decryption Password:</label>
+
+            <div class="password-wrapper">
+              <input type="password" id="decodeAudioPassword" name="password" placeholder="Enter secret key" required />
+              <span class="toggle-password" onclick="togglePassword('decodeAudioPassword', this)"> 👁 </span>
+            </div>
+          </div>
+
+          <p id="decodeAudioResult"></p>
+
+          <button class="action-btn2" type="submit">Decode Secret Message</button>
+        </form>
+        <!-- DECODE Video -->
+        <form id="decode-video" class="workspace" enctype="multipart/form-data">
+          <label for="decode-video-file" class="upload-label">Upload Stego Video:</label>
+          <div class="upload-area" id="decode-video-drop-area">
+            <div class="upload-content">
+              <img src="{{ url_for('static', filename='res/upload.png') }}" class="upload-image" />
+              <p><span class="browse">Click to Upload</span> or Drag & drop your Stego video here.</p>
+              <p class="plite">MP4, AVI, MKV, etc.</p>
+            </div>
+
+            <input type="file" id="decode-video-file" name="image" accept=".mp4,.avi,.mkv" hidden />
+
+            <video id="decode-video-preview" class="preview-video" controls style="display:none;"></video>
+          </div>
+
+          <div class="password-group">
+            <label for="decodeVideoPassword">Decryption Password:</label>
+
+            <div class="password-wrapper">
+              <input type="password" id="decodeVideoPassword" name="password" placeholder="Enter secret key" required />
+              <span class="toggle-password" onclick="togglePassword('decodeVideoPassword', this)"> 👁 </span>
+            </div>
+          </div>
+
+          <p id="decodeVideoResult"></p>
+
+          <button class="action-btn2" type="submit">Decode Secret Message</button>
+        </form>
+        
+        <div id="metricsSection" class="metrics-section">
+            <h3 class="metrics-title">Quality Metrics Analysis</h3>
+              
+            <div id="metricsCards" class="metrics-cards"></div>
+              
+            <div class="chart-wrapper">
+                <canvas id="qualityChart"></canvas>
+            </div>
+            <div id="heatmapContainer" class="heatmap-container" style="display:none;">
+                <h3 class="metrics-title">Image Distortion Heatmap</h3>
+                <img
+                    id="heatmapImage"
+                    class="heatmap-image"
+                    src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+                    alt="Heatmap Visualization"
+                />
+            </div>
+        </div>
+        
+        
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div>© 2025 StegSecure. All rights reserved.</div>
+        <div>Secure • Hidden • Intelligent Communication</div>
+      </div>
+    </footer>
+
+    <script>
+      const DEFAULT_PREVIEW = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+    </script>
+
+
+    <script>
+      function togglePassword(inputId, icon) {
+        const input = document.getElementById(inputId);
+
+        if (input.type === "password") {
+          input.type = "text";
+          icon.textContent = "🙈";
+        } else {
+          input.type = "password";
+          icon.textContent = "👁";
+        }
+      }
+    </script>
+
+    <script>
+      function setupDropZone(dropAreaId, inputId, previewId) {
+        const dropArea = document.getElementById(dropAreaId);
+        const fileInput = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+
+        // Click to browse
+        dropArea.addEventListener("click", () => fileInput.click());
+
+        // Browse handler
+        fileInput.addEventListener("change", handleFiles);
+
+        // Drag & Drop events
+        dropArea.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          dropArea.classList.add("dragover");
+        });
+
+        dropArea.addEventListener("dragleave", () => {
+          dropArea.classList.remove("dragover");
+        });
+
+        dropArea.addEventListener("drop", (e) => {
+          e.preventDefault();
+          dropArea.classList.remove("dragover");
+          const file = e.dataTransfer.files[0];
+          if (file) showPreview(file);
+        });
+
+        function handleFiles() {
+          const file = fileInput.files[0];
+          if (file) showPreview(file);
+        }
+
+        function showPreview(file) {
+          const url = URL.createObjectURL(file);
+
+          // ✅ Only clear inside current drop area
+          dropArea.parentElement.querySelectorAll(".preview-img, .preview-audio, .preview-video")
+            .forEach(el => el.style.display = "none");
+
+          if (file.type.startsWith("image")) {
+            preview.src = url;
+            preview.style.display = "block";
+          }
+
+          else if (file.type.startsWith("audio")) {
+            preview.src = url;
+            preview.style.display = "block";
+          }
+
+          else if (file.type.startsWith("video")) {
+            preview.src = url;
+            preview.style.display = "block";
+          }
+        }
+      }
+
+      // Initialize for both Encode & Decode areas
+      setupDropZone("encode-drop-area", "encode-file", "encode-preview");
+      setupDropZone("decode-drop-area", "decode-file", "decode-preview");
+      setupDropZone("encode-audio-drop-area", "encode-audio-file", "encode-audio-preview");
+      setupDropZone("encode-video-drop-area", "encode-video-file", "encode-video-preview");
+      setupDropZone("decode-audio-drop-area", "decode-audio-file", "decode-audio-preview");
+      setupDropZone("decode-video-drop-area", "decode-video-file", "decode-video-preview");
+    </script>
+
+    
+    <script>
+    function clearResults() {
+      document.getElementById("encodeResult").innerHTML = "";
+      document.getElementById("encodeAudioResult").innerHTML = "";
+      document.getElementById("encodeVideoResult").innerHTML = "";
+      document.getElementById("decodeResult").innerHTML = "";
+      document.getElementById("decodeAudioResult").innerHTML = "";
+      document.getElementById("decodeVideoResult").innerHTML = "";
+    }
+
+    function clearPreviews() {
+      document.getElementById("encode-preview").src = DEFAULT_PREVIEW;
+      document.getElementById("decode-preview").src = DEFAULT_PREVIEW;
+
+      document.getElementById("encode-audio-preview").style.display = "none";
+      document.getElementById("decode-audio-preview").style.display = "none";
+
+      document.getElementById("encode-video-preview").style.display = "none";
+      document.getElementById("decode-video-preview").style.display = "none";
+    }
+    </script>
+    
+    
+    <script>
+    let selectedType = "image";
+    let selectedMode = "encode";
+
+    function showForm() {
+
+      // hide ALL forms
+      document.querySelectorAll(".workspace").forEach(f => f.classList.remove("active"));
+
+      const formId = `${selectedMode}-${selectedType}`;
+      const form = document.getElementById(formId);
+
+      if (form) form.classList.add("active");
+    }
+
+    /* COVER SELECTOR */
+    document.querySelectorAll(".cover-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+
+        document.querySelectorAll(".cover-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        selectedType = btn.dataset.type;
+        clearResults();
+        clearPreviews();
+        showForm();
+        updateHiddenInputs();
+      });
+    });
+
+    /* MODE TOGGLE */
+    document.getElementById("encode").addEventListener("change", () => {
+      selectedMode = "encode";
+      clearResults();
+      clearPreviews();
+      showForm();
+    });
+
+    document.getElementById("decode").addEventListener("change", () => {
+      selectedMode = "decode";
+      clearResults();
+      clearPreviews();
+      showForm();
+    });
+
+    /* HIDDEN INPUT */
+    function updateHiddenInputs() {
+      document.querySelectorAll("form").forEach(form => {
+        let old = form.querySelector("input[name='stegMethod']");
+        if (old) old.remove();
+
+        let input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "stegMethod";
+        input.value = selectedType;
+
+        form.appendChild(input);
+      });
+    }
+
+    /* INITIAL LOAD */
+    updateHiddenInputs();
+    showForm();
+    </script>
+    
+    
+    <!-- ENCODE IMAGE AUDIO VIDEO -->
+    <script>
+    document.getElementById("encode-image").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const resultBox = document.getElementById("encodeResult");
+      resultBox.className = "result-msg";
+      resultBox.innerHTML = "<strong>Processing...</strong>";
+
+      try {
+        const response = await fetch("/encode", {
+          method: "POST",
+          body: new FormData(this)
+        });
+
+        const data = await response.json();
+
+        if (data.status === "success") {
+          resultBox.classList.add("success");
+          resultBox.innerHTML = `
+          <div class="result-card">
+              <h3>✓ Stego Image Generated Successfully</h3>
+
+              <div class="result-info">
+                  <p><strong>Type:</strong> ${data.file_type}</p>
+                  <p><strong>Size:</strong> ${data.file_size}</p>
+              </div>
+              <a href="/download/${data.output_file}"
+                 class="download-btn">
+                 Download Stego Image
+              </a>
+          </div>
+          `;
+          
+          if (data.metrics) {
+              displayMetrics("image", data.metrics);
+          }
+          
+          this.reset();
+          document.getElementById("encode-preview").src = DEFAULT_PREVIEW;
+
+        } else {
+          this.reset();
+          resultBox.classList.add("error");
+          resultBox.innerHTML = "<strong>Error:</strong> " + data.message;
+        }
+
+      } catch (err) {
+        this.reset();
+        resultBox.classList.add("error");
+        resultBox.innerHTML = "<strong>Error:</strong> Server error.";
+      }
+    });
+    </script>
+    
+    
+    
+    <script>
+    document.getElementById("encode-audio").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const resultBox = document.getElementById("encodeAudioResult");
+      resultBox.className = "result-msg";
+      resultBox.innerHTML = "<strong>Processing...</strong>";
+
+      try {
+        const response = await fetch("/encode", {
+          method: "POST",
+          body: new FormData(this)
+        });
+
+        const data = await response.json();
+
+        if (data.status === "success") {
+          resultBox.classList.add("success");
+          resultBox.innerHTML = `
+          <div class="result-card">
+              <h3>✓ Stego Audio Generated Successfully</h3>
+              <div class="result-info">
+                  <p><strong>Type:</strong> ${data.file_type}</p>
+                  <p><strong>Size:</strong> ${data.file_size}</p>
+              </div>
+              <a href="/download/${data.output_file}"
+                 class="download-btn">
+                 Download Stego Audio
+              </a>
+          </div>
+          `;
+          
+          if (data.metrics) {
+              displayMetrics("audio", data.metrics);
+          }
+          
+          this.reset();
+          document.getElementById("encode-audio-preview").style.display = "none";
+        } else {
+          this.reset();
+          resultBox.classList.add("error");
+          resultBox.innerHTML = "<strong>Error:</strong> " + data.message;
+        }
+
+      } catch (err) {
+        this.reset();
+        resultBox.classList.add("error");
+        resultBox.innerHTML = "<strong>Error:</strong> Server error.";
+      }
+    });
+    </script>
+    
+    <script>
+    document.getElementById("encode-video").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const resultBox = document.getElementById("encodeVideoResult");
+      resultBox.className = "result-msg";
+      resultBox.innerHTML = "<strong>Processing...</strong>";
+
+      try {
+        const response = await fetch("/encode", {
+          method: "POST",
+          body: new FormData(this)
+        });
+
+        const data = await response.json();
+
+        if (data.status === "success") {
+          resultBox.classList.add("success");
+          resultBox.innerHTML = `
+          <div class="result-card">
+              <h3>✓ Stego Video Generated Successfully</h3>
+              <div class="result-info">
+                  <p><strong>Type:</strong> ${data.file_type}</p>
+                  <p><strong>Size:</strong> ${data.file_size}</p>
+              </div>
+              <a href="/download/${data.output_file}"
+                 class="download-btn">
+                 Download Stego Video
+              </a>
+          </div>
+          `;
+          
+          if (data.metrics) {
+              displayMetrics("video", data.metrics);
+          }
+          
+          this.reset();
+          document.getElementById("encode-video-preview").style.display = "none";
+        } else {
+          this.reset();
+          resultBox.classList.add("error");
+          resultBox.innerHTML = "<strong>Error:</strong> " + data.message;
+        }
+
+      } catch (err) {
+        this.reset();
+        resultBox.classList.add("error");
+        resultBox.innerHTML = "<strong>Error:</strong> Server error.";
+      }
+    });
+    </script>
+    
+    
+    <!-- DECODE IMAGE AUDIO VIDEO -->
+    <script>
+    document.getElementById("decode-image").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const resultBox = document.getElementById("decodeResult");
+      resultBox.className = "result-msg";
+      resultBox.innerHTML = "<strong>Processing...</strong>";
+
+      try {
+        const response = await fetch("/decode", {
+          method: "POST",
+          body: new FormData(this)
+        });
+
+        const data = await response.json();
+
+        if (data.status === "success") {
+          resultBox.classList.add("success");
+          resultBox.innerHTML = `<strong>Hidden Message:</strong> 
+                                <span id="decodedTextImage">${data.message}</span>
+                                <button type="button" class="copy-btn" onclick="copyToClipboard(this, 'decodedTextImage')">
+                                <img src="{{ url_for('static', filename='res/copy.png') }}" class="copy-icon">
+                                </button>`;
+          autoClearMessage("decodeResult", 60000);
+          this.reset();
+          document.getElementById("decode-preview").src = DEFAULT_PREVIEW;
+
+        } else {
+          this.reset();
+          document.getElementById("decode-preview").src = DEFAULT_PREVIEW;
+          resultBox.classList.add("error");
+          resultBox.innerHTML = "<strong>Error:</strong> " + data.message;
+        }
+
+      } catch (err) {
+        resultBox.classList.add("error");
+        resultBox.innerHTML = "<strong>Error:</strong> Server error.";
+      }
+    });
+    </script>
+    
+    
+    <script>
+    document.getElementById("decode-audio").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const resultBox = document.getElementById("decodeAudioResult");
+      resultBox.className = "result-msg";
+      resultBox.innerHTML = "<strong>Processing...</strong>";
+
+      try {
+        const response = await fetch("/decode", {
+          method: "POST",
+          body: new FormData(this)
+        });
+
+        const data = await response.json();
+
+        if (data.status === "success") {
+          resultBox.classList.add("success");
+          resultBox.innerHTML = `<strong>Hidden Message:</strong> 
+                                <span id="decodedTextAudio">${data.message}</span>
+                                <button type="button" class="copy-btn" onclick="copyToClipboard(this, 'decodedTextAudio')">
+                                <img src="{{ url_for('static', filename='res/copy.png') }}" class="copy-icon">
+                                </button>`;
+          autoClearMessage("decodeAudioResult", 60000);
+          this.reset();
+          document.getElementById("decode-audio-preview").style.display = "none";
+        } else {
+          this.reset();
+          document.getElementById("decode-audio-preview").style.display = "none";
+          resultBox.classList.add("error");
+          resultBox.innerHTML = "<strong>Error:</strong> " + data.message;
+        }
+
+      } catch (err) {
+        resultBox.classList.add("error");
+        resultBox.innerHTML = "<strong>Error:</strong> Server error during decoding.";
+      }
+    });
+    </script>
+    
+    <script>
+    document.getElementById("decode-video").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const resultBox = document.getElementById("decodeVideoResult");
+      resultBox.className = "result-msg";
+      resultBox.innerHTML = "<strong>Processing...</strong>";
+
+      try {
+        const response = await fetch("/decode", {
+          method: "POST",
+          body: new FormData(this)
+        });
+
+        const data = await response.json();
+
+        if (data.status === "success") {
+          resultBox.classList.add("success");
+          resultBox.innerHTML = `<strong>Hidden Message:</strong> 
+                                <span id="decodedTextVideo">${data.message}</span>
+                                <button type="button" class="copy-btn" onclick="copyToClipboard(this, 'decodedTextVideo')">
+                                <img src="{{ url_for('static', filename='res/copy.png') }}" class="copy-icon">
+                                </button>`;
+          autoClearMessage("decodeVideoResult", 60000);
+          this.reset();
+          document.getElementById("decode-video-preview").style.display = "none";
+        } else {
+          this.reset();
+          document.getElementById("decode-video-preview").style.display = "none";
+          resultBox.classList.add("error");
+          resultBox.innerHTML = "<strong>Error:</strong> " + data.message;
+        }
+
+      } catch (err) {
+        resultBox.classList.add("error");
+        resultBox.innerHTML = "<strong>Error:</strong> Server error during decoding.";
+      }
+    });
+    </script>
+    
+    <script>
+    function autoClearMessage(elementId, delay = 60000) {
+      setTimeout(() => {
+        const el = document.getElementById(elementId);
+        if (el) {
+          el.innerHTML = "";
+          el.className = ""; // remove success/error styling
+        }
+      }, delay);
+    }
+    </script>
+    
+    <script>
+    function copyToClipboard(button, elementId) {
+      const text = document.getElementById(elementId).innerText;
+
+      navigator.clipboard.writeText(text).then(() => {
+
+        const img = button.querySelector("img");
+
+        // change to tick
+        img.src = "{{ url_for('static', filename='res/tick.png') }}";
+
+        // optional: slight scale effect
+        img.style.transform = "scale(1.2)";
+
+        // revert back after 1 second
+        setTimeout(() => {
+          img.src = "{{ url_for('static', filename='res/copy.png') }}";
+          img.style.transform = "scale(1)";
+        }, 1000);
+
+      });
+    }
+    </script>
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+    let qualityChartInstance = null;
+
+    function displayMetrics(method, metrics) {
+        const metricsSection = document.getElementById("metricsSection");
+        const metricsCards = document.getElementById("metricsCards");
+        const ctx = document.getElementById("qualityChart").getContext("2d");
+
+        metricsSection.style.display = "block";
+        metricsCards.innerHTML = "";
+
+        let labels = [];
+        let values = [];
+
+        function addCard(title, value) {
+            metricsCards.innerHTML += `
+                <div class="metric-card">
+                    <h4>${title}</h4>
+                    <p>${value}</p>
+                </div>
+            `;
+        }
+
+        if (method === "image") {
+            labels = ["PSNR", "SSIM"];
+            values = [metrics.psnr, metrics.ssim];
+
+            addCard("PSNR", metrics.psnr + " dB");
+            addCard("SSIM", metrics.ssim);
+
+            if (metrics.heatmap) {
+                const heatmapContainer = document.getElementById("heatmapContainer");
+                const heatmapImage = document.getElementById("heatmapImage");
+
+                heatmapContainer.style.display = "block";
+
+                heatmapImage.src =
+                    "/outputs/" +
+                    metrics.heatmap +
+                    "?t=" +
+                    new Date().getTime();
+            } else {
+                document.getElementById("heatmapContainer").style.display = "none";
+            }
+        }
+
+        else if (method === "audio") {
+            labels = ["SNR", "MSE"];
+            values = [metrics.snr, metrics.mse];
+
+            addCard("SNR", metrics.snr + " dB");
+            addCard("MSE", metrics.mse);
+            
+            document.getElementById("heatmapContainer").style.display = "none";
+        }
+
+        else if (method === "video") {
+            labels = ["Original Size", "Stego Size", "Increase", "% Increase"];
+            values = [
+                metrics.original_size_kb,
+                metrics.stego_size_kb,
+                metrics.size_increase_kb,
+                metrics.percentage_increase
+            ];
+
+            addCard("Original Size", metrics.original_size_kb + " KB");
+            addCard("Stego Size", metrics.stego_size_kb + " KB");
+            addCard("Size Increase", metrics.size_increase_kb + " KB");
+            addCard("% Increase", metrics.percentage_increase + "%");
+            
+            document.getElementById("heatmapContainer").style.display = "none";
+        }
+
+        if (qualityChartInstance) {
+            qualityChartInstance.destroy();
+        }
+
+        qualityChartInstance = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Quality Metrics",
+                    data: values,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+    </script>
+    
+    
+    
+    
+  </body>
+</html>

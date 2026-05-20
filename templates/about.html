@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>StegSecure — Hide Your Secrets in Plain Sight</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='aboutstyles.css') }}" />
+  <link rel="icon" type="image/png"
+      href="{{ url_for('static', filename='res/secure.png') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container navbar">
+      <a class="brand" href="#" aria-label="StegSecure Home" onclick="window.location.href='{{ url_for('home') }}';">
+        <span class="logo" aria-hidden="true">
+          <img src= "{{ url_for('static', filename='res/icon.png') }}" width="32" height="32">
+        </span>
+        <span class="brand-name" >StegSecure</span>
+      </a>
+
+      <nav aria-label="Main navigation">
+  <div class="nav-links">
+    <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+    <a class="nav-link" href="{{ url_for('tool') }}">Tool</a>
+    <a class="nav-link" href="{{ url_for('about') }}">About</a>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <h1 class="headline">About StegSecure</h1>
+          <p class="subtext">
+            A next-generation multimedia steganography platform integrating AES encryption, SHA-256 authentication, and covert secure communication.
+          </p>
+        </div>
+      </div>
+    </section>
+  
+    <div class="hero-img">
+      <img src="{{ url_for('static', filename='res/about.png') }}"/>  
+    </div>
+    
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <h3>What is Steganography?</h3>
+          <p>
+            Steganography is the technique of concealing confidential information within ordinary digital media such as images, audio, and video files while hiding the very existence of the communication itself.
+
+Unlike encryption, which makes data unreadable but visible, steganography focuses on invisibility. In StegSecure, advanced Least Significant Bit (LSB) techniques are used to securely embed encrypted payloads with minimal perceptual distortion.
+          </p>
+          <img src="{{ url_for('static', filename='res/BSW.png') }}"/>
+          <h3>What is Cryptography?</h3>
+          <p>Cryptography is the science of protecting sensitive information through encryption techniques that transform readable data into secure unreadable ciphertext.
+
+StegSecure utilizes AES encryption for strong confidentiality protection and SHA-256 hashing for secure password authentication, ensuring that only authorized users can access hidden information.
+          </p>
+          <img src="{{ url_for('static', filename='res/BCW.png') }}"/>
+          <h3>What is StegSecure?</h3>
+          <p>StegSecure is a modern multimedia cybersecurity platform that combines cryptography and steganography to provide secure hidden communication across image, audio, and video formats.
+
+The system encrypts confidential information using AES encryption and securely conceals the encrypted payload using:
+          </p>
+          <div class="feature-grid">
+
+            <div class="feature-box">
+              <img src="{{ url_for('static', filename='res/image-icon.png') }}">
+              <h4>Image LSB</h4>
+            </div>
+
+            <div class="feature-box">
+              <img src="{{ url_for('static', filename='res/audio-icon.png') }}">
+              <h4>Audio LSB</h4>
+            </div>
+
+            <div class="feature-box">
+              <img src="{{ url_for('static', filename='res/video-icon.png') }}">
+              <h4>Video EOF</h4>
+            </div>
+
+            <div class="feature-box">
+              <img src="{{ url_for('static', filename='res/security-icon.png') }}">
+              <h4>AES + SHA-256</h4>
+            </div>
+
+          </div>
+          
+          <div class="architecture-section">
+              <img src="{{ url_for('static', filename='res/Arc.png') }}">
+          </div>
+          
+          <div class="architecture-text">
+            <p>
+              StegSecure combines advanced cryptography, multimedia steganography,
+              and analytical performance evaluation into a unified cybersecurity platform
+              for secure and covert digital communication.
+            </p>
+          </div>
+          
+        </div>
+      </div>
+    </section>
+    
+    
+    
+    
+    
+    </main> 
+      
+      
+      
+      
+      
+      
+      
+      
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div>© 2025 StegSecure. All rights reserved.</div>
+        <div>Secure • Hidden • Intelligent Communication</div>
+      </div>
+    </footer>  
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+    </body>
+</html>
