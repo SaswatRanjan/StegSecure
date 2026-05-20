@@ -6,3 +6,4 @@ Pillow
 cryptography
 scikit-image
 moviepy
+matplotlib
