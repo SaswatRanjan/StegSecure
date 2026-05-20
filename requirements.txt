@@ -7,3 +7,4 @@ cryptography
 scikit-image
 moviepy
 matplotlib
+pycryptodome
