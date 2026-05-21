@@ -182,11 +182,6 @@ StegSecure/
 │                   ├── SpaceGrotesk-Regular.ttf
 │                   └── SpaceGrotesk-SemiBold.ttf
 │
-├── Samples/
-│   ├── image_sample.png
-│   ├── sample.wav
-│   └── Sample.mp4
-│
 ├── uploads/
 │   └── .gitkeep
 └── outputs/
