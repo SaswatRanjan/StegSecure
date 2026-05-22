@@ -1,5 +1,8 @@
 from flask import Flask, render_template, request, jsonify, send_from_directory
+from werkzeug.utils import secure_filename
+
 import os
+import uuid
 
 from quality_metrics import (
     calculate_psnr,
@@ -12,7 +15,6 @@ from quality_metrics import (
 
 from algorithms.Encode import encode_lsb
 from algorithms.Decode import (
-    decode_lsb,
     decode_lsb_header,
     decode_lsb_full,
     extract_hash,
@@ -20,7 +22,6 @@ from algorithms.Decode import (
 
 from algorithms.audio_encode import encode_audio
 from algorithms.audio_decode import (
-    decode_audio,
     decode_audio_header,
     decode_audio_full,
     extract_audio_hash,
@@ -28,7 +29,6 @@ from algorithms.audio_decode import (
 
 from algorithms.video_encode import encode_video
 from algorithms.video_decode import (
-    decode_video,
     decode_video_header,
     decode_video_full,
     extract_video_hash,
@@ -45,17 +45,48 @@ from crypto_utils import (
 
 app = Flask(__name__)
 
-# ================= FOLDERS =================
+# =========================
+# CONFIG
+# =========================
+
 UPLOAD_FOLDER = "uploads"
 OUTPUT_FOLDER = "outputs"
 
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['OUTPUT_FOLDER'] = OUTPUT_FOLDER
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["OUTPUT_FOLDER"] = OUTPUT_FOLDER
+
+app.config["MAX_CONTENT_LENGTH"] = 200 * 1024 * 1024
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-# ================= ROUTES =================
+# =========================
+# ALLOWED EXTENSIONS
+# =========================
+
+ALLOWED_IMAGE = {".png", ".bmp"}
+ALLOWED_AUDIO = {".wav", ".flac"}
+ALLOWED_VIDEO = {".mp4", ".avi", ".mkv"}
+
+
+def allowed_file(filename, method):
+    ext = os.path.splitext(filename)[1].lower()
+
+    if method == "image":
+        return ext in ALLOWED_IMAGE
+
+    elif method == "audio":
+        return ext in ALLOWED_AUDIO
+
+    elif method == "video":
+        return ext in ALLOWED_VIDEO
+
+    return False
+
+
+# =========================
+# ROUTES
+# =========================
 
 @app.route("/")
 def home():
@@ -77,28 +108,37 @@ def serve_output(filename):
     return send_from_directory(OUTPUT_FOLDER, filename)
 
 
-# ================= DOWNLOAD ROUTE =================
+# =========================
+# DOWNLOAD ROUTE
+# =========================
 
-@app.route('/download/<filename>')
+@app.route("/download/<filename>")
 def download_file(filename):
+
+    safe_filename = secure_filename(filename)
+
     return send_from_directory(
-        app.config['OUTPUT_FOLDER'],
-        filename,
+        app.config["OUTPUT_FOLDER"],
+        safe_filename,
         as_attachment=True
     )
 
 
-# ================= ENCODE =================
+# =========================
+# ENCODE
+# =========================
 
 @app.route("/encode", methods=["POST"])
 def encode():
+
     try:
-        image = request.files.get("image")
+
+        uploaded_file = request.files.get("image")
         message = request.form.get("message")
         password = request.form.get("password")
         method = request.form.get("stegMethod")
 
-        if not image or not message or not method:
+        if not uploaded_file or not message or not method:
             return jsonify({
                 "status": "error",
                 "message": "All fields required"
@@ -110,29 +150,79 @@ def encode():
                 "message": "Password required"
             })
 
-        input_path = os.path.join(UPLOAD_FOLDER, image.filename)
+        if not allowed_file(uploaded_file.filename, method):
+            return jsonify({
+                "status": "error",
+                "message": "Unsupported file format"
+            })
 
-        output_filename = "stego_" + image.filename
-        output_path = os.path.join(OUTPUT_FOLDER, output_filename)
+        # =========================
+        # SECURE FILENAMES
+        # =========================
 
-        image.save(input_path)
+        original_name = secure_filename(uploaded_file.filename)
+
+        ext = os.path.splitext(original_name)[1]
+
+        unique_name = f"{uuid.uuid4().hex}{ext}"
+
+        input_path = os.path.join(
+            UPLOAD_FOLDER,
+            unique_name
+        )
+
+        output_filename = f"stego_{uuid.uuid4().hex}{ext}"
+
+        output_path = os.path.join(
+            OUTPUT_FOLDER,
+            output_filename
+        )
+
+        uploaded_file.save(input_path)
+
+        # =========================
+        # ENCRYPTION
+        # =========================
 
         password_hash = generate_password_hash(password)
 
         encrypted = encrypt_message(message, password)
+
         encrypted_text = bytes_to_text(encrypted)
 
-        final_payload = password_hash + "#####HASH#####" + encrypted_text
+        final_payload = (
+            password_hash
+            + "#####HASH#####"
+            + encrypted_text
+        )
 
-        # ===== IMAGE =====
+        # =========================
+        # IMAGE
+        # =========================
+
         if method == "image":
 
-            encode_lsb(input_path, final_payload, output_path)
+            encode_lsb(
+                input_path,
+                final_payload,
+                output_path
+            )
 
-            psnr_value = calculate_psnr(input_path, output_path)
-            ssim_value = calculate_ssim(input_path, output_path)
+            psnr_value = calculate_psnr(
+                input_path,
+                output_path
+            )
 
-            heatmap_filename = "heatmap_" + image.filename + ".png"
+            ssim_value = calculate_ssim(
+                input_path,
+                output_path
+            )
+
+            heatmap_filename = (
+                "heatmap_"
+                + uuid.uuid4().hex
+                + ".png"
+            )
 
             heatmap_path = os.path.join(
                 OUTPUT_FOLDER,
@@ -148,26 +238,47 @@ def encode():
             metrics = {
                 "psnr": psnr_value,
                 "ssim": ssim_value,
-                "heatmap": heatmap_filename,
+                "heatmap": heatmap_filename
             }
 
-        # ===== AUDIO =====
+        # =========================
+        # AUDIO
+        # =========================
+
         elif method == "audio":
 
-            encode_audio(input_path, final_payload, output_path)
+            encode_audio(
+                input_path,
+                final_payload,
+                output_path
+            )
 
-            snr_value = calculate_audio_snr(input_path, output_path)
-            mse_value = calculate_audio_mse(input_path, output_path)
+            snr_value = calculate_audio_snr(
+                input_path,
+                output_path
+            )
+
+            mse_value = calculate_audio_mse(
+                input_path,
+                output_path
+            )
 
             metrics = {
                 "snr": snr_value,
                 "mse": mse_value
             }
 
-        # ===== VIDEO =====
+        # =========================
+        # VIDEO
+        # =========================
+
         elif method == "video":
 
-            encode_video(input_path, final_payload, output_path)
+            encode_video(
+                input_path,
+                final_payload,
+                output_path
+            )
 
             metrics = calculate_video_file_metrics(
                 input_path,
@@ -180,18 +291,19 @@ def encode():
                 "message": "Invalid method"
             })
 
-        # ===== FILE INFO =====
+        # =========================
+        # FILE INFO
+        # =========================
 
         file_size = round(
-            os.path.getsize(output_path) / (1024 * 1024),
+            os.path.getsize(output_path)
+            / (1024 * 1024),
             2
         )
 
         file_extension = os.path.splitext(
             output_path
         )[1].upper()
-
-        # ===== SUCCESS RESPONSE =====
 
         return jsonify({
             "status": "success",
@@ -203,22 +315,27 @@ def encode():
         })
 
     except Exception as e:
+
         return jsonify({
             "status": "error",
             "message": str(e)
         })
 
 
-# ================= DECODE =================
+# =========================
+# DECODE
+# =========================
 
 @app.route("/decode", methods=["POST"])
 def decode():
+
     try:
-        image = request.files.get("image")
+
+        uploaded_file = request.files.get("image")
         password = request.form.get("password")
         method = request.form.get("stegMethod")
 
-        if not image or not method:
+        if not uploaded_file or not method:
             return jsonify({
                 "status": "error",
                 "message": "File and method required"
@@ -230,14 +347,29 @@ def decode():
                 "message": "Password required"
             })
 
+        if not allowed_file(uploaded_file.filename, method):
+            return jsonify({
+                "status": "error",
+                "message": "Unsupported file format"
+            })
+
+        original_name = secure_filename(uploaded_file.filename)
+
+        ext = os.path.splitext(original_name)[1]
+
+        unique_name = f"{uuid.uuid4().hex}{ext}"
+
         input_path = os.path.join(
             UPLOAD_FOLDER,
-            image.filename
+            unique_name
         )
 
-        image.save(input_path)
+        uploaded_file.save(input_path)
 
-        # ===== IMAGE =====
+        # =========================
+        # IMAGE
+        # =========================
+
         if method == "image":
 
             header = decode_lsb_header(input_path)
@@ -245,14 +377,18 @@ def decode():
             stored_hash = extract_hash(header)
 
             if not stored_hash or not verify_password(password, stored_hash):
+
                 return jsonify({
                     "status": "error",
-                    "message": "Incorrect password or corrupted hidden data",
+                    "message": "Incorrect password or corrupted hidden data"
                 })
 
             full_payload = decode_lsb_full(input_path)
 
-        # ===== AUDIO =====
+        # =========================
+        # AUDIO
+        # =========================
+
         elif method == "audio":
 
             header = decode_audio_header(input_path)
@@ -260,14 +396,18 @@ def decode():
             stored_hash = extract_audio_hash(header)
 
             if not stored_hash or not verify_password(password, stored_hash):
+
                 return jsonify({
                     "status": "error",
-                    "message": "Incorrect password or corrupted hidden data",
+                    "message": "Incorrect password or corrupted hidden data"
                 })
 
             full_payload = decode_audio_full(input_path)
 
-        # ===== VIDEO =====
+        # =========================
+        # VIDEO
+        # =========================
+
         elif method == "video":
 
             header = decode_video_header(input_path)
@@ -275,9 +415,10 @@ def decode():
             stored_hash = extract_video_hash(header)
 
             if not stored_hash or not verify_password(password, stored_hash):
+
                 return jsonify({
                     "status": "error",
-                    "message": "Incorrect password or corrupted hidden data",
+                    "message": "Incorrect password or corrupted hidden data"
                 })
 
             full_payload = decode_video_full(input_path)
@@ -287,6 +428,10 @@ def decode():
                 "status": "error",
                 "message": "Invalid method"
             })
+
+        # =========================
+        # PAYLOAD VALIDATION
+        # =========================
 
         if not full_payload:
             return jsonify({
@@ -305,27 +450,17 @@ def decode():
             1
         )
 
-        if not encrypted_text:
-            return jsonify({
-                "status": "error",
-                "message": "No hidden message found"
-            })
-
         encrypted_bytes = text_to_bytes(encrypted_text)
 
-        if len(encrypted_bytes) < 16:
-            return jsonify({
-                "status": "error",
-                "message": "Corrupted or incomplete hidden data"
-            })
-
         try:
+
             message = decrypt_message(
                 encrypted_bytes,
                 password
             )
 
         except Exception:
+
             return jsonify({
                 "status": "error",
                 "message": "Incorrect password or corrupted data"
@@ -337,17 +472,21 @@ def decode():
         })
 
     except Exception as e:
+
         return jsonify({
             "status": "error",
             "message": str(e)
         })
 
 
-# ================= MAIN =================
+# =========================
+# MAIN
+# =========================
 
 if __name__ == "__main__":
+
     app.run(
         host="0.0.0.0",
         port=5000,
-        debug=True
+        debug=False
     )
