@@ -116,65 +116,75 @@ Structured encoding and decoding workflow with secure handling of uploaded media
 
 ```text
 StegSecure/
+├── .gitignore
 ├── app.py
 ├── crypto_utils.py
-├── quality_metrics.py
+├── desktop.ini
 ├── LICENSE
+├── quality_metrics.py
 ├── README.md
 ├── requirements.txt
-├── .gitignore
-│
-├── screenshots/
-│   ├── homepage.png
-│   ├── encode.png
-│   └── analysis.png
 │
 ├── algorithms/
 │   ├── __init__.py
-│   ├── Encode.py
-│   ├── Decode.py
-│   ├── audio_encode.py
 │   ├── audio_decode.py
-│   ├── video_encode.py
-│   └── video_decode.py
+│   ├── audio_encode.py
+│   ├── Decode.py
+│   ├── Encode.py
+│   ├── video_decode.py
+│   └── video_encode.py
 │
-├── templates/
-│   ├── home.html
-│   ├── tool.html
-│   └── about.html
+├── outputs/
+│   └── .gitkeep
+│
+├── screenshots/
+│   ├── analysis.png
+│   ├── encode.png
+│   └── homepage.png
 │
 ├── static/
+│   ├── aboutstyles.css
 │   ├── indexstyles.css
 │   ├── toolstyles.css
-│   ├── aboutstyles.css
+│   │
+│   ├── js/
+│   │   ├── chart.js
+│   │   └── tool.js
+│   │
 │   ├── res/
-│   │   ├── icon.png
-│   │   ├── encode.png
+│   │   ├── about.png
+│   │   ├── al.png
+│   │   ├── Arc.png
+│   │   ├── audio-icon.png
+│   │   ├── BCW.png
+│   │   ├── BSW.png
+│   │   ├── copy.png
 │   │   ├── decode.png
-│   │   ├── secure.png
+│   │   ├── encode.png
+│   │   ├── eye.png
+│   │   ├── eye-off.png
+│   │   ├── icon.png
+│   │   ├── il.png
+│   │   ├── image-icon.png
 │   │   ├── lock.png
 │   │   ├── lock_dark.png
+│   │   ├── next.png
+│   │   ├── Rambagh Palace.png
+│   │   ├── secure.png
+│   │   ├── security-icon.png
+│   │   ├── tick.png
 │   │   ├── unlock.png
 │   │   ├── unlock_dark.png
 │   │   ├── upload.png
-│   │   ├── next.png
-│   │   ├── copy.png
-│   │   ├── tick.png
-│   │   ├── about.png
-│   │   ├── Arc.png
-│   │   ├── BCW.png
-│   │   ├── BSW.png
-│   │   ├── image-icon.png
-│   │   ├── audio-icon.png
 │   │   ├── video-icon.png
-│   │   ├── security-icon.png
-│   │   └── Rambagh Palace.png
+│   │   └── vl.png
+│   │
 │   └── src/
 │       └── fonts/
 │           └── Space_Grotesk/
-│               ├── SpaceGrotesk-VariableFont_wght.ttf
 │               ├── OFL.txt
 │               ├── README.txt
+│               ├── SpaceGrotesk-VariableFont_wght.ttf
 │               └── static/
 │                   ├── SpaceGrotesk-Bold.ttf
 │                   ├── SpaceGrotesk-Light.ttf
@@ -182,9 +192,12 @@ StegSecure/
 │                   ├── SpaceGrotesk-Regular.ttf
 │                   └── SpaceGrotesk-SemiBold.ttf
 │
-├── uploads/
-│   └── .gitkeep
-└── outputs/
+├── templates/
+│   ├── about.html
+│   ├── home.html
+│   └── tool.html
+│
+└── uploads/
     └── .gitkeep
 ```
 
@@ -347,6 +360,19 @@ Potential future enhancements include:
 - Download and preview enhancements
 - Desktop application support
 - Advanced analytics dashboard
+
+---
+
+## Recent Improvements
+
+- Refactored frontend JavaScript architecture
+- Added modern dashboard-style metrics visualization
+- Improved audio and video steganography decoding reliability
+- Added secure UUID-based file handling
+- Added secure download route protection
+- Integrated circular SSIM quality visualization
+- Improved deployment readiness for public hosting
+- Added offline-compatible Chart.js integration
 
 ---
 

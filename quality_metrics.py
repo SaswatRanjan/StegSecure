@@ -56,35 +56,75 @@ def generate_image_heatmap(original_path, stego_path, output_path):
 
 # ================= AUDIO =================
 def calculate_audio_mse(original_path, stego_path):
+
     with wave.open(original_path, "rb") as orig:
-        orig_frames = np.frombuffer(orig.readframes(orig.getnframes()), dtype=np.int16)
+
+        orig_frames = np.frombuffer(
+            orig.readframes(orig.getnframes()),
+            dtype=np.int16
+        ).astype(np.float64)
 
     with wave.open(stego_path, "rb") as steg:
-        steg_frames = np.frombuffer(steg.readframes(steg.getnframes()), dtype=np.int16)
+
+        steg_frames = np.frombuffer(
+            steg.readframes(steg.getnframes()),
+            dtype=np.int16
+        ).astype(np.float64)
 
     min_len = min(len(orig_frames), len(steg_frames))
 
-    mse = np.mean((orig_frames[:min_len] - steg_frames[:min_len]) ** 2)
+    mse = np.mean(
+        (
+            orig_frames[:min_len]
+            - steg_frames[:min_len]
+        ) ** 2
+    )
+
+    if np.isnan(mse):
+        return 0
 
     return round(float(mse), 4)
 
 
 def calculate_audio_snr(original_path, stego_path):
+
     with wave.open(original_path, "rb") as orig:
-        orig_frames = np.frombuffer(orig.readframes(orig.getnframes()), dtype=np.int16)
+
+        orig_frames = np.frombuffer(
+            orig.readframes(orig.getnframes()),
+            dtype=np.int16
+        ).astype(np.float64)
 
     with wave.open(stego_path, "rb") as steg:
-        steg_frames = np.frombuffer(steg.readframes(steg.getnframes()), dtype=np.int16)
+
+        steg_frames = np.frombuffer(
+            steg.readframes(steg.getnframes()),
+            dtype=np.int16
+        ).astype(np.float64)
 
     min_len = min(len(orig_frames), len(steg_frames))
 
-    signal_power = np.mean(orig_frames[:min_len] ** 2)
-    noise_power = np.mean((orig_frames[:min_len] - steg_frames[:min_len]) ** 2)
+    original_signal = orig_frames[:min_len]
 
-    if noise_power == 0:
+    stego_signal = steg_frames[:min_len]
+
+    signal_power = np.mean(original_signal ** 2)
+
+    noise_power = np.mean(
+        (original_signal - stego_signal) ** 2
+    )
+
+    if (
+        noise_power <= 0
+        or signal_power <= 0
+        or np.isnan(noise_power)
+        or np.isnan(signal_power)
+    ):
         return 100
 
-    snr = 10 * math.log10(signal_power / noise_power)
+    snr = 10 * math.log10(
+        signal_power / noise_power
+    )
 
     return round(snr, 2)
 

@@ -8,3 +8,7 @@ scikit-image
 moviepy
 matplotlib
 pycryptodome
+scipy
+imageio
+imageio-ffmpeg
+soundfile
