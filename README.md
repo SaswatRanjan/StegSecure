@@ -146,6 +146,8 @@ StegSecure/
 │   ├── aboutstyles.css
 │   ├── indexstyles.css
 │   ├── toolstyles.css
+│   ├── robots.txt
+│   ├── sitemap.xml
 │   │
 │   ├── js/
 │   │   ├── chart.js

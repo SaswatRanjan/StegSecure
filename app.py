@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
+from flask import send_from_directory
 
 import os
 import uuid
@@ -106,6 +107,21 @@ def about():
 @app.route("/outputs/<path:filename>")
 def serve_output(filename):
     return send_from_directory(OUTPUT_FOLDER, filename)
+
+
+@app.route("/robots.txt")
+def robots():
+    return send_from_directory(
+        "static",
+        "robots.txt"
+    )
+
+@app.route("/sitemap.xml")
+def sitemap():
+    return send_from_directory(
+        "static",
+        "sitemap.xml"
+    )
 
 
 # =========================
